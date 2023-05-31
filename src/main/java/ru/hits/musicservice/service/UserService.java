@@ -2,6 +2,9 @@ package ru.hits.musicservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +14,14 @@ import ru.hits.musicservice.dto.UserSignInDto;
 import ru.hits.musicservice.dto.UserSignUpDto;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
+import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.exception.UnauthorizedException;
 import ru.hits.musicservice.repository.UserRepository;
 import ru.hits.musicservice.security.JWTUtil;
+import ru.hits.musicservice.security.UserDetailsServiceImpl;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +58,23 @@ public class UserService {
         }
 
         return new UserProfileAndTokenDto(new UserProfileDto(user.get()), jwtUtil.generateToken(user.get().getId()));
+    }
+
+    public UserProfileDto getUserProfileInfo() {
+        UUID id = getAuthenticatedUserId();
+        Optional<UserEntity> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + id + " не найден.");
+        }
+
+        return new UserProfileDto(user.get());
+    }
+
+    private UUID getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return UUID.fromString(userDetails.getUsername());
     }
 
 }
