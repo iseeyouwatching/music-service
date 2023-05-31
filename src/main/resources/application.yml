@@ -12,3 +12,11 @@ spring:
   mandatory-file-encoding: UTF-8
   mvc:
     dispatch-options-request: true
+
+jwt-token:
+  permit-all:
+    - /api/users/register
+    - /api/users/login
+  secret: qqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrttty
+  issuer: music-service-api
+  subject: User details
