@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @Builder
 @Table(name = "_user")
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
