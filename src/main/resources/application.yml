@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: ${spring_datasource_url:jdbc:postgresql://postgres:5432/music-service-db}
+    username: ${spring_datasource_username:postgres}
+    password: ${spring_datasource_password:postgres}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: ${spring_jpa_hibernate_ddl-auto:update}
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    show-sql: false
+  mandatory-file-encoding: UTF-8
+  mvc:
+    dispatch-options-request: true
