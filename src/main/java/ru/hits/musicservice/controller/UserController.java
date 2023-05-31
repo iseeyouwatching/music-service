@@ -46,4 +46,11 @@ public class UserController {
                 .body(userProfileAndTokenDto.getUserProfileDto());
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> userLogout() {
+        return ResponseEntity.ok()
+                .headers(new HttpHeaders())
+                .build();
+    }
+
 }
