@@ -1,5 +1,8 @@
 package ru.hits.musicservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +21,12 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "Пользователь.")
 public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "Регистрация.")
     @PostMapping("/register")
     public ResponseEntity<UserProfileDto> userSignUp(@RequestBody @Valid UserSignUpDto userSignUpDto) {
         UserProfileAndTokenDto userProfileAndTokenDto = userService.userSignUp(userSignUpDto);
@@ -34,6 +39,7 @@ public class UserController {
                 .body(userProfileAndTokenDto.getUserProfileDto());
     }
 
+    @Operation(summary = "Аутентификация.")
     @PostMapping("/login")
     public ResponseEntity<UserProfileDto> userSignIn(@RequestBody @Valid UserSignInDto userSignInDto) {
         UserProfileAndTokenDto userProfileAndTokenDto = userService.userSignIn(userSignInDto);
@@ -44,13 +50,6 @@ public class UserController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(userProfileAndTokenDto.getUserProfileDto());
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Void> userLogout() {
-        return ResponseEntity.ok()
-                .headers(new HttpHeaders())
-                .build();
     }
 
 }
