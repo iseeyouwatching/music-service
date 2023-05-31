@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hits.musicservice.dto.UserProfileAndTokenDto;
 import ru.hits.musicservice.dto.UserProfileDto;
+import ru.hits.musicservice.dto.UserSignInDto;
 import ru.hits.musicservice.dto.UserSignUpDto;
 import ru.hits.musicservice.service.UserService;
 
@@ -24,6 +25,18 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserProfileDto> userSignUp(@RequestBody @Valid UserSignUpDto userSignUpDto) {
         UserProfileAndTokenDto userProfileAndTokenDto = userService.userSignUp(userSignUpDto);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + userProfileAndTokenDto.getToken());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(userProfileAndTokenDto.getUserProfileDto());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserProfileDto> userSignIn(@RequestBody @Valid UserSignInDto userSignInDto) {
+        UserProfileAndTokenDto userProfileAndTokenDto = userService.userSignIn(userSignInDto);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + userProfileAndTokenDto.getToken());

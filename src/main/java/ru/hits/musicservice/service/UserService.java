@@ -7,11 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.UserProfileAndTokenDto;
 import ru.hits.musicservice.dto.UserProfileDto;
+import ru.hits.musicservice.dto.UserSignInDto;
 import ru.hits.musicservice.dto.UserSignUpDto;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
+import ru.hits.musicservice.exception.UnauthorizedException;
 import ru.hits.musicservice.repository.UserRepository;
 import ru.hits.musicservice.security.JWTUtil;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +41,17 @@ public class UserService {
         user = userRepository.save(user);
 
         return new UserProfileAndTokenDto(new UserProfileDto(user), jwtUtil.generateToken(user.getId()));
+    }
+
+    public UserProfileAndTokenDto userSignIn(UserSignInDto userSignInDto) {
+        Optional<UserEntity> user = userRepository.findByEmail(userSignInDto.getEmail());
+
+        if (user.isEmpty() ||
+                !bCryptPasswordEncoder.matches(userSignInDto.getPassword(), user.get().getPassword())) {
+            throw new UnauthorizedException("Некорректные данные.");
+        }
+
+        return new UserProfileAndTokenDto(new UserProfileDto(user.get()), jwtUtil.generateToken(user.get().getId()));
     }
 
 }
