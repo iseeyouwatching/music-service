@@ -1,3 +1,9 @@
+minio:
+  access-key: 362ijbLnQvs1hSZ5
+  secret-key: W9wrcwRxGOQVXXCY3nkRq9qF7uCISZbe
+  bucket: music-service-bucket
+  url: http://localhost:9900
+
 spring:
   datasource:
     url: ${spring_datasource_url:jdbc:postgresql://postgres:5432/music-service-db}
