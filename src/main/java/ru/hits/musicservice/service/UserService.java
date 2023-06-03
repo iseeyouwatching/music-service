@@ -18,7 +18,6 @@ import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.exception.UnauthorizedException;
 import ru.hits.musicservice.repository.UserRepository;
 import ru.hits.musicservice.security.JWTUtil;
-import ru.hits.musicservice.security.UserDetailsServiceImpl;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -73,8 +72,7 @@ public class UserService {
 
     private UUID getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return UUID.fromString(userDetails.getUsername());
+        return (UUID) authentication.getPrincipal();
     }
 
 }

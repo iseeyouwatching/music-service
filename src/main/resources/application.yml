@@ -1,8 +1,8 @@
 minio:
-  access-key: 362ijbLnQvs1hSZ5
-  secret-key: W9wrcwRxGOQVXXCY3nkRq9qF7uCISZbe
+  access-key: s54FEu7WmkuXoL3f
+  secret-key: HlFR1FcMybUlFe8jDqob5mCPxit4X9JZ
   bucket: music-service-bucket
-  url: http://localhost:9900
+  url: http://minio:9000
 
 spring:
   datasource:
@@ -14,15 +14,15 @@ spring:
     hibernate:
       ddl-auto: ${spring_jpa_hibernate_ddl-auto:update}
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
-    show-sql: false
-  mandatory-file-encoding: UTF-8
-  mvc:
-    dispatch-options-request: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 jwt-token:
   permit-all:
     - /api/users/register
     - /api/users/login
+  root-path: /api
   secret: qqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrtttyyyuuuiiiooopppqqqwwweeerrrttty
   issuer: music-service-api
   subject: User details

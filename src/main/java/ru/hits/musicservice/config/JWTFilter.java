@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.hits.musicservice.security.JWTUtil;
+import ru.hits.musicservice.security.JwtAuthentication;
 import ru.hits.musicservice.security.UserDetailsServiceImpl;
 
 import javax.servlet.FilterChain;
@@ -22,7 +23,6 @@ import java.util.UUID;
 public class JWTFilter extends OncePerRequestFilter  {
 
     private final JWTUtil jwtUtil;
-    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain)
@@ -38,12 +38,7 @@ public class JWTFilter extends OncePerRequestFilter  {
             } else {
                 try {
                     UUID id = jwtUtil.validateTokenAndRetrieveClaim(jwt);
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(id));
-
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails,
-                                    userDetails.getPassword(),
-                                    userDetails.getAuthorities());
+                    var authentication = new JwtAuthentication(id);
 
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
                         SecurityContextHolder.getContext().setAuthentication(authentication);

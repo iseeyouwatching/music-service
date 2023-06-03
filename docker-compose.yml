@@ -9,6 +9,7 @@ services:
       - '8080:8080'
     depends_on:
       - postgres
+      - minio
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/music-service-db
       - SPRING_DATASOURCE_USERNAME=postgres
@@ -32,8 +33,8 @@ services:
     volumes:
       - minio-data:/data
     ports:
-      - 9900:9000
-      - 9901:9001
+      - 9000:9000
+      - 9001:9001
 
 volumes:
   minio-data:
