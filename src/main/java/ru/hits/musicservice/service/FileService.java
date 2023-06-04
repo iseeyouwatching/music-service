@@ -1,5 +1,6 @@
 package ru.hits.musicservice.service;
 
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hits.musicservice.config.MinioConfiguration;
+import ru.hits.musicservice.dto.FileDownloadDto;
 import ru.hits.musicservice.entity.FileMetadataEntity;
+import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.FileMetadataRepository;
 
 import javax.annotation.PostConstruct;
@@ -60,5 +63,26 @@ public class FileService {
         fileMetadataRepository.save(fileMetadata);
 
         return id;
+    }
+
+    public FileDownloadDto download(UUID id) {
+        FileMetadataEntity fileMetadata = fileMetadataRepository.findByObjectName(id)
+                .orElseThrow(() -> {
+                    String errorMessage = "Файл с ID " + id + " не найден.";
+                    log.error(errorMessage);
+                    return new NotFoundException(errorMessage);
+                });
+
+        var args = GetObjectArgs.builder()
+                .bucket(fileMetadata.getBucket())
+                .object(String.valueOf(id))
+                .build();
+        try (var in = minioClient.getObject(args)) {
+            return new FileDownloadDto(in.readAllBytes(), fileMetadata.getFilename());
+        } catch (Exception e) {
+            String errorMessage = "Ошибка при загрузке файла с ID " + id + ".";
+            log.error(errorMessage, e);
+            throw new RuntimeException(errorMessage, e);
+        }
     }
 }
