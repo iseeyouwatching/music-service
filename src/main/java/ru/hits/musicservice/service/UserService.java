@@ -40,6 +40,10 @@ public class UserService {
             throw new ConflictException("Пользователь с почтой " + userSignUpDto.getEmail() + " уже существует.");
         }
 
+        if (userRepository.findByUsername(userSignUpDto.getUsername()).isPresent()) {
+            throw new ConflictException("Пользователь с ником " + userSignUpDto.getUsername() + " уже существует.");
+        }
+
         UserEntity user = modelMapper.map(userSignUpDto, UserEntity.class);
         user.setPassword(bCryptPasswordEncoder.encode(userSignUpDto.getPassword()));
         user = userRepository.save(user);
@@ -105,6 +109,10 @@ public class UserService {
         }
 
         if (userUpdateInfoDto.getUsername() != null) {
+            if (userRepository.findByUsername(userUpdateInfoDto.getUsername()).isPresent()) {
+                throw new ConflictException("Пользователь с ником " + userUpdateInfoDto.getUsername() + " уже существует.");
+            }
+
             user.setUsername(userUpdateInfoDto.getUsername());
         }
 
