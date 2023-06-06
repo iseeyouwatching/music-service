@@ -18,6 +18,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -79,4 +81,14 @@ public class UserController {
     public ResponseEntity<UserProfileDto> uploadHeaderImage(@RequestParam("file") MultipartFile headerImage) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         return new ResponseEntity<>(userService.uploadHeaderImage(headerImage), HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Получить загруженные пользователем треки.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/{userId}/uploaded-tracks")
+    public ResponseEntity<List<IncompleteTrackInfoDto>> getUploadedTracks(@PathVariable("userId") UUID userId) {
+        return new ResponseEntity<>(userService.getUploadedTracks(userId), HttpStatus.OK);
+    }
+
 }

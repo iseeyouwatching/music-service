@@ -11,16 +11,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hits.musicservice.dto.*;
+import ru.hits.musicservice.entity.TrackEntity;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.exception.UnauthorizedException;
+import ru.hits.musicservice.repository.TrackRepository;
 import ru.hits.musicservice.repository.UserRepository;
 import ru.hits.musicservice.security.JWTUtil;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +37,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final JWTUtil jwtUtil;
     private final FileService fileService;
+    private final TrackRepository trackRepository;
 
     @Transactional
     public UserProfileAndTokenDto userSignUp(UserSignUpDto userSignUpDto) {
@@ -101,6 +106,23 @@ public class UserService {
 
         UserEntity savedUser = userRepository.save(user.get());
         return new UserProfileDto(savedUser);
+    }
+
+    public List<IncompleteTrackInfoDto> getUploadedTracks(UUID userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
+        }
+
+        List<TrackEntity> tracks = trackRepository.findAllByUser(user.get());
+
+        List<IncompleteTrackInfoDto> result = new ArrayList<>();
+        for (TrackEntity track : tracks) {
+            result.add(new IncompleteTrackInfoDto(track));
+        }
+
+        return result;
     }
 
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {

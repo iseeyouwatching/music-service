@@ -23,8 +23,6 @@ public class TrackEntity {
     )
     private UUID id;
 
-    private UUID uploaderId;
-
     private String uploaderUsername;
 
     private String name;
