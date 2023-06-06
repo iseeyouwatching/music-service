@@ -35,6 +35,8 @@ public class UserProfileDto {
 
     private UUID avatar;
 
+    private UUID headerImage;
+
     public UserProfileDto(UserEntity user) {
         this.id = user.getId();
         this.email = user.getEmail();
@@ -47,6 +49,7 @@ public class UserProfileDto {
         this.gender = user.getGender();
         this.bio = user.getBio();
         this.avatar = user.getAvatar();
+        this.headerImage = user.getHeaderImage();
     }
 
 }

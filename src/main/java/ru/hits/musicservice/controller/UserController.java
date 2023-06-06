@@ -1,17 +1,23 @@
 package ru.hits.musicservice.controller;
 
+import io.minio.errors.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.service.UserService;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -57,11 +63,20 @@ public class UserController {
     }
 
     @Operation(
-            summary = "Изменение профиля.",
+            summary = "Изменение данных профиля.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<UserProfileDto> updateUserInfo(@RequestBody @Valid UserUpdateInfoDto userUpdateInfoDto) {
         return new ResponseEntity<>(userService.updateUserInfo(userUpdateInfoDto), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Изменение картинки заголовка.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PutMapping(value = "/upload-header-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserProfileDto> uploadHeaderImage(@RequestParam("file") MultipartFile headerImage) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        return new ResponseEntity<>(userService.uploadHeaderImage(headerImage), HttpStatus.OK);
     }
 }

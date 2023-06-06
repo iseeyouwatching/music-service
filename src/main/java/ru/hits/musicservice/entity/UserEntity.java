@@ -47,4 +47,6 @@ public class UserEntity {
 
     private UUID avatar;
 
+    private UUID headerImage;
+
 }
