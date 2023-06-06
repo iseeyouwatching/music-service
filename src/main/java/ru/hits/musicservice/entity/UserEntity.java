@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import ru.hits.musicservice.enumeration.Gender;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -49,5 +50,8 @@ public class UserEntity {
     private UUID avatar;
 
     private UUID headerImage;
+
+    @OneToMany(mappedBy = "user")
+    private List<TrackEntity> tracks;
 
 }
