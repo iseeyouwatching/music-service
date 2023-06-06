@@ -1,13 +1,9 @@
 package ru.hits.musicservice.dto;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.enumeration.Gender;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.util.UUID;
 
 @Data

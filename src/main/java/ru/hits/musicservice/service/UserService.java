@@ -8,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.hits.musicservice.dto.UserProfileAndTokenDto;
-import ru.hits.musicservice.dto.UserProfileDto;
-import ru.hits.musicservice.dto.UserSignInDto;
-import ru.hits.musicservice.dto.UserSignUpDto;
+import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
@@ -33,10 +30,6 @@ public class UserService {
 
     @Transactional
     public UserProfileAndTokenDto userSignUp(UserSignUpDto userSignUpDto) {
-        if (userRepository.findByUsername(userSignUpDto.getUsername()).isPresent()) {
-            throw new ConflictException("Пользователь с ником " + userSignUpDto.getUsername() + " уже существует.");
-        }
-
         if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
             throw new ConflictException("Пользователь с почтой " + userSignUpDto.getEmail() + " уже существует.");
         }
@@ -68,6 +61,51 @@ public class UserService {
         }
 
         return new UserProfileDto(user.get());
+    }
+
+    @Transactional
+    public UserProfileDto updateUserInfo(UserUpdateInfoDto userUpdateInfoDto) {
+        UUID id = getAuthenticatedUserId();
+        Optional<UserEntity> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + id + " не найден.");
+        }
+
+        updateUserEntity(user.get(), userUpdateInfoDto);
+
+        UserEntity savedUser = userRepository.save(user.get());
+        return new UserProfileDto(savedUser);
+    }
+
+    private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {
+        if (userUpdateInfoDto.getAvatar() != null) {
+            user.setAvatar(userUpdateInfoDto.getAvatar());
+        }
+
+        if (userUpdateInfoDto.getUsername() != null) {
+            user.setUsername(userUpdateInfoDto.getUsername());
+        }
+
+        if (userUpdateInfoDto.getName() != null) {
+            user.setName(userUpdateInfoDto.getName());
+        }
+
+        if (userUpdateInfoDto.getSurname() != null) {
+            user.setSurname(userUpdateInfoDto.getSurname());
+        }
+
+        if (userUpdateInfoDto.getCity() != null) {
+            user.setCity(userUpdateInfoDto.getCity());
+        }
+
+        if (userUpdateInfoDto.getCountry() != null) {
+            user.setCountry(userUpdateInfoDto.getCountry());
+        }
+
+        if (userUpdateInfoDto.getBio() != null) {
+            user.setBio(userUpdateInfoDto.getBio());
+        }
     }
 
     private UUID getAuthenticatedUserId() {

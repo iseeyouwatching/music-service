@@ -8,10 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hits.musicservice.dto.UserProfileAndTokenDto;
-import ru.hits.musicservice.dto.UserProfileDto;
-import ru.hits.musicservice.dto.UserSignInDto;
-import ru.hits.musicservice.dto.UserSignUpDto;
+import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.service.UserService;
 
 import javax.validation.Valid;
@@ -59,5 +56,12 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserProfileInfo(), HttpStatus.OK);
     }
 
-
+    @Operation(
+            summary = "Изменение профиля.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PutMapping()
+    public ResponseEntity<UserProfileDto> updateUserInfo(@RequestBody @Valid UserUpdateInfoDto userUpdateInfoDto) {
+        return new ResponseEntity<>(userService.updateUserInfo(userUpdateInfoDto), HttpStatus.OK);
+    }
 }
