@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -27,7 +27,9 @@ public class FollowerEntity {
     )
     private UUID id;
 
-    private LocalDate followingDate;
+    private LocalDateTime followingDate;
+
+    private LocalDateTime unfollowingDate;
 
     private boolean isFollowing;
 
