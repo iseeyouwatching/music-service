@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.hits.musicservice.dto.SubscriberInfoDto;
-import ru.hits.musicservice.service.SubscribersService;
+import ru.hits.musicservice.dto.FollowerInfoDto;
+import ru.hits.musicservice.service.FollowersService;
 
 import java.util.List;
 
@@ -18,17 +18,17 @@ import java.util.List;
 @RequestMapping("/api/subscribers")
 @RequiredArgsConstructor
 @Tag(name = "Подписчики.")
-public class SubscribersController {
+public class FollowersController {
 
-    private final SubscribersService subscribersService;
+    private final FollowersService followersService;
 
     @Operation(
             summary = "Получить список подписчиков.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping
-    public ResponseEntity<List<SubscriberInfoDto>> getSubscribers() {
-        return new ResponseEntity<>(subscribersService.getSubscribers(), HttpStatus.OK);
+    public ResponseEntity<List<FollowerInfoDto>> getFollowers() {
+        return new ResponseEntity<>(followersService.getFollowers(), HttpStatus.OK);
     }
 
 }

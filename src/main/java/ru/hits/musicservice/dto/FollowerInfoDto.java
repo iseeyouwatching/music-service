@@ -9,7 +9,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SubscriberInfoDto {
+public class FollowerInfoDto {
 
     private UUID id;
 

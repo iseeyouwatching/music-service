@@ -16,8 +16,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(name = "subscriber")
-public class SubscriberEntity {
+@Table(name = "follower")
+public class FollowerEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
