@@ -37,6 +37,8 @@ public class UserProfileDto {
 
     private UUID headerImage;
 
+    private int subscribersCount;
+
     public UserProfileDto(UserEntity user) {
         this.id = user.getId();
         this.email = user.getEmail();
@@ -50,6 +52,7 @@ public class UserProfileDto {
         this.bio = user.getBio();
         this.avatar = user.getAvatar();
         this.headerImage = user.getHeaderImage();
+        this.subscribersCount = user.getSubscribersCount();
     }
 
 }

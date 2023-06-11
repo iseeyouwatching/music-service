@@ -51,6 +51,7 @@ public class UserService {
         }
 
         UserEntity user = modelMapper.map(userSignUpDto, UserEntity.class);
+        user.setSubscribersCount(0);
         user.setPassword(bCryptPasswordEncoder.encode(userSignUpDto.getPassword()));
         user = userRepository.save(user);
 

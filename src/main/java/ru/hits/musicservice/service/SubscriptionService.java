@@ -1,12 +1,14 @@
 package ru.hits.musicservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.nullness.Opt;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.SubscriberDto;
 import ru.hits.musicservice.entity.SubscriberEntity;
+import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.SubscriberRepository;
@@ -25,7 +27,8 @@ public class SubscriptionService {
 
     @Transactional
     public SubscriberDto subscribe(UUID userId) {
-        if (userRepository.findById(userId).isEmpty()) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
             throw new NotFoundException("Пользователя с ID " + userId + " не существует.");
         }
 
@@ -48,13 +51,16 @@ public class SubscriptionService {
                 .followerId(followerId)
                 .build();
         subscriberResult = subscriberRepository.save(subscriberResult);
+        user.get().setSubscribersCount(user.get().getSubscribersCount() + 1);
+        userRepository.save(user.get());
 
         return new SubscriberDto(subscriberResult);
     }
 
     @Transactional
     public SubscriberDto unsubscribe(UUID userId) {
-        if (userRepository.findById(userId).isEmpty()) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
             throw new NotFoundException("Пользователя с ID " + userId + " не существует.");
         }
 
@@ -73,6 +79,11 @@ public class SubscriptionService {
         subscriber.get().setFollowingDate(null);
         subscriber.get().setFollowing(false);
         subscriber = Optional.of(subscriberRepository.save(subscriber.get()));
+
+        if (user.get().getSubscribersCount() != 0) {
+            user.get().setSubscribersCount(user.get().getSubscribersCount() - 1);
+            userRepository.save(user.get());
+        }
 
         return new SubscriberDto(subscriber.get());
     }

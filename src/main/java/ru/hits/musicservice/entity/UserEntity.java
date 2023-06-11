@@ -51,6 +51,8 @@ public class UserEntity {
 
     private UUID headerImage;
 
+    private int subscribersCount;
+
     @OneToMany(mappedBy = "user")
     private List<TrackEntity> tracks;
 
