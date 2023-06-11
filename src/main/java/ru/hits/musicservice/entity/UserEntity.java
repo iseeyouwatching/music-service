@@ -49,8 +49,10 @@ public class UserEntity {
 
     private UUID avatar;
 
+    @Column(name = "header_image")
     private UUID headerImage;
 
+    @Column(name = "subscribers_count")
     private int subscribersCount;
 
     @OneToMany(mappedBy = "user")

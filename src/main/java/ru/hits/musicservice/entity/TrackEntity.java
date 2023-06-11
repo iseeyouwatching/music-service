@@ -23,14 +23,17 @@ public class TrackEntity {
     )
     private UUID id;
 
+    @Column(name = "uploader_username")
     private String uploaderUsername;
 
     private String name;
 
-    private Integer likesCounter;
+    @Column(name = "likes_count")
+    private Integer likesCount;
 
     private String description;
 
+    @Column(name = "is_public")
     private boolean isPublic;
 
     @ManyToOne

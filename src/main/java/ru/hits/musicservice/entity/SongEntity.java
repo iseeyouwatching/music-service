@@ -3,10 +3,7 @@ package ru.hits.musicservice.entity;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -27,19 +24,26 @@ public class SongEntity {
     )
     private UUID id;
 
+    @Column(name = "cover_id")
     private UUID coverId;
 
     private String name;
 
+    @Column(name = "author_username")
     private String authorUsername;
 
+    @Column(name = "author_id")
     private UUID authorId;
 
+    @Column(name = "upload_date")
     private LocalDate uploadDate;
 
     private String description;
 
+    @Column(name = "likes_count")
     private int likesCount;
 
+    @Column(name = "file_id")
+    private UUID fileId;
 
 }

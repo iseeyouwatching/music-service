@@ -17,6 +17,7 @@ import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.exception.UnauthorizedException;
+import ru.hits.musicservice.repository.FileMetadataRepository;
 import ru.hits.musicservice.repository.TrackRepository;
 import ru.hits.musicservice.repository.UserRepository;
 import ru.hits.musicservice.security.JWTUtil;
@@ -39,6 +40,7 @@ public class UserService {
     private final JWTUtil jwtUtil;
     private final FileService fileService;
     private final TrackRepository trackRepository;
+    private final FileMetadataRepository fileMetadataRepository;
 
     @Transactional
     public TokenDto userSignUp(UserSignUpDto userSignUpDto) {
@@ -129,6 +131,9 @@ public class UserService {
 
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {
         if (userUpdateInfoDto.getAvatar() != null) {
+            if (fileMetadataRepository.findByObjectName(userUpdateInfoDto.getAvatar()).isEmpty()) {
+                throw new NotFoundException("Файла с ID " + userUpdateInfoDto.getAvatar() + " не существует.");
+            }
             user.setAvatar(userUpdateInfoDto.getAvatar());
         }
 

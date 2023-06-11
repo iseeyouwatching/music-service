@@ -26,7 +26,7 @@ public class IncompleteTrackInfoDto {
         this.id = track.getId();
         this.uploaderUsername = track.getUploaderUsername();
         this.name = track.getName();
-        this.likesCounter = track.getLikesCounter();
+        this.likesCounter = track.getLikesCount();
         this.isPublic = track.isPublic();
     }
 
