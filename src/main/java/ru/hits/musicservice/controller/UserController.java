@@ -31,28 +31,14 @@ public class UserController {
 
     @Operation(summary = "Регистрация.")
     @PostMapping("/register")
-    public ResponseEntity<UserProfileDto> userSignUp(@RequestBody @Valid UserSignUpDto userSignUpDto) {
-        UserProfileAndTokenDto userProfileAndTokenDto = userService.userSignUp(userSignUpDto);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + userProfileAndTokenDto.getToken());
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(userProfileAndTokenDto.getUserProfileDto());
+    public ResponseEntity<TokenDto> userSignUp(@RequestBody @Valid UserSignUpDto userSignUpDto) {
+        return new ResponseEntity<>(userService.userSignUp(userSignUpDto), HttpStatus.OK);
     }
 
     @Operation(summary = "Аутентификация.")
     @PostMapping("/login")
-    public ResponseEntity<UserProfileDto> userSignIn(@RequestBody @Valid UserSignInDto userSignInDto) {
-        UserProfileAndTokenDto userProfileAndTokenDto = userService.userSignIn(userSignInDto);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + userProfileAndTokenDto.getToken());
-
-        return ResponseEntity.ok()
-                .headers(headers)
-                .body(userProfileAndTokenDto.getUserProfileDto());
+    public ResponseEntity<TokenDto> userSignIn(@RequestBody @Valid UserSignInDto userSignInDto) {
+        return new ResponseEntity<>(userService.userSignIn(userSignInDto), HttpStatus.OK);
     }
 
     @Operation(

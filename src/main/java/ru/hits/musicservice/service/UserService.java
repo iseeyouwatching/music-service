@@ -1,5 +1,6 @@
 package ru.hits.musicservice.service;
 
+import antlr.Token;
 import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -40,7 +41,7 @@ public class UserService {
     private final TrackRepository trackRepository;
 
     @Transactional
-    public UserProfileAndTokenDto userSignUp(UserSignUpDto userSignUpDto) {
+    public TokenDto userSignUp(UserSignUpDto userSignUpDto) {
         if (userRepository.findByEmail(userSignUpDto.getEmail()).isPresent()) {
             throw new ConflictException("Пользователь с почтой " + userSignUpDto.getEmail() + " уже существует.");
         }
@@ -53,10 +54,10 @@ public class UserService {
         user.setPassword(bCryptPasswordEncoder.encode(userSignUpDto.getPassword()));
         user = userRepository.save(user);
 
-        return new UserProfileAndTokenDto(new UserProfileDto(user), jwtUtil.generateToken(user.getId()));
+        return new TokenDto(jwtUtil.generateToken(user.getId()));
     }
 
-    public UserProfileAndTokenDto userSignIn(UserSignInDto userSignInDto) {
+    public TokenDto userSignIn(UserSignInDto userSignInDto) {
         Optional<UserEntity> user = userRepository.findByEmail(userSignInDto.getEmail());
 
         if (user.isEmpty() ||
@@ -64,7 +65,7 @@ public class UserService {
             throw new UnauthorizedException("Некорректные данные.");
         }
 
-        return new UserProfileAndTokenDto(new UserProfileDto(user.get()), jwtUtil.generateToken(user.get().getId()));
+        return new TokenDto(jwtUtil.generateToken(user.get().getId()));
     }
 
     public UserProfileDto getUserProfileInfo() {
