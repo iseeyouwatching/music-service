@@ -2,7 +2,7 @@ package ru.hits.musicservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.hits.musicservice.entity.FollowerEntity;
+import ru.hits.musicservice.entity.SubscriberEntity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FollowerDto {
+public class SubscriberDto {
 
     private UUID id;
 
@@ -26,7 +26,7 @@ public class FollowerDto {
 
     private UUID followerId;
 
-    public FollowerDto(FollowerEntity follower) {
+    public SubscriberDto(SubscriberEntity follower) {
         this.id = follower.getId();
         this.followingDate = follower.getFollowingDate();
         this.unfollowingDate = follower.getUnfollowingDate();
