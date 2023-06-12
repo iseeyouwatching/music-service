@@ -48,8 +48,26 @@ public class LikeService {
         songRepository.save(song);
     }
 
-    public void takeLikeOffTheSong() {
+    public void takeLikeOffTheSong(UUID songId) {
+        UUID authenticatedUserId = getAuthenticatedUserId();
 
+        UserEntity user = userRepository.findById(authenticatedUserId)
+                .orElseThrow(() -> new NotFoundException("Пользователя с ID " + authenticatedUserId + " не существует."));
+        SongEntity song = songRepository.findById(songId)
+                .orElseThrow(() -> new NotFoundException("Песни с ID " + songId + " не существует."));
+
+        Optional<LikeEntity> like = likeRepository.findByUserAndSong(user, song);
+        if (like.isEmpty()) {
+            throw new ConflictException("У пользователя с ID " + authenticatedUserId
+                    + " не стоит лайк на песне с ID " + song.getId() + ".");
+        }
+
+        likeRepository.delete(like.get());
+
+        if (song.getLikesCount() != 0) {
+            song.setLikesCount(song.getLikesCount() - 1);
+            songRepository.save(song);
+        }
     }
 
     private UUID getAuthenticatedUserId() {

@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.hits.musicservice.service.LikeService;
 
 import java.util.UUID;
@@ -29,6 +26,16 @@ public class LikeController {
     @PostMapping("/add/{songId}")
     public ResponseEntity<Void> likeSong(@PathVariable("songId") UUID songId) {
         likeService.likeSong(songId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Убрать лайк с песни.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @DeleteMapping("/remove-like/{songId}")
+    public ResponseEntity<Void> takeLikeOffTheSong(@PathVariable("songId") UUID songId) {
+        likeService.takeLikeOffTheSong(songId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
