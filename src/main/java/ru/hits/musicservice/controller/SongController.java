@@ -11,6 +11,9 @@ import ru.hits.musicservice.dto.AddSongDto;
 import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.service.SongService;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/songs")
 @RequiredArgsConstructor
@@ -24,8 +27,18 @@ public class SongController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/add")
-    public ResponseEntity<SongInfoDto> addSong(@RequestBody AddSongDto addSongDto) {
+    public ResponseEntity<SongInfoDto> addSong(@RequestBody @Valid AddSongDto addSongDto) {
         return new ResponseEntity<>(songService.addSong(addSongDto), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Удалить песню.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSong(@PathVariable("id") UUID songId) {
+        songService.deleteSong(songId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

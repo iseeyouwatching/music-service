@@ -112,22 +112,22 @@ public class UserService {
         return new UserProfileDto(savedUser);
     }
 
-    public List<IncompleteTrackInfoDto> getUploadedTracks(UUID userId) {
-        Optional<UserEntity> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
-        }
-
-        List<TrackEntity> tracks = trackRepository.findAllByUser(user.get());
-
-        List<IncompleteTrackInfoDto> result = new ArrayList<>();
-        for (TrackEntity track : tracks) {
-            result.add(new IncompleteTrackInfoDto(track));
-        }
-
-        return result;
-    }
+//    public List<IncompleteTrackInfoDto> getUploadedTracks(UUID userId) {
+//        Optional<UserEntity> user = userRepository.findById(userId);
+//
+//        if (user.isEmpty()) {
+//            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
+//        }
+//
+//        List<TrackEntity> tracks = trackRepository.findAllByUser(user.get());
+//
+//        List<IncompleteTrackInfoDto> result = new ArrayList<>();
+//        for (TrackEntity track : tracks) {
+//            result.add(new IncompleteTrackInfoDto(track));
+//        }
+//
+//        return result;
+//    }
 
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {
         if (userUpdateInfoDto.getAvatar() != null) {

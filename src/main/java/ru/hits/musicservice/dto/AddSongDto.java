@@ -3,6 +3,7 @@ package ru.hits.musicservice.dto;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Data
@@ -12,7 +13,7 @@ import java.util.UUID;
 @Setter
 public class AddSongDto {
 
-    @NotBlank(message = "Идентификатор обложки не может быть пустым.")
+    @NotNull(message = "Идентификатор обложки не может быть пустым.")
     private UUID coverId;
 
     @NotBlank(message = "Название песни не может быть пустым.")
@@ -20,7 +21,7 @@ public class AddSongDto {
 
     private String description;
 
-    @NotBlank(message = "Идентификатор файла не может быть пустым.")
+    @NotNull(message = "Идентификатор файла не может быть пустым.")
     private UUID fileId;
 
 }

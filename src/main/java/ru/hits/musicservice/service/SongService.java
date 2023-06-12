@@ -15,6 +15,7 @@ import ru.hits.musicservice.repository.SongRepository;
 import ru.hits.musicservice.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -52,6 +53,24 @@ public class SongService {
         song = songRepository.save(song);
 
         return new SongInfoDto(song);
+    }
+
+    @Transactional
+    public void deleteSong(UUID songId) {
+        UUID authorId = getAuthenticatedUserId();
+
+        if (songRepository.findById(songId).isEmpty()) {
+            throw new NotFoundException("Песни с ID " + songId + " не существует.");
+        }
+
+        Optional<SongEntity> song = songRepository.findByIdAndAuthorId(songId, authorId);
+        if (song.isEmpty()) {
+            throw new NotFoundException("У пользователя с ID " + authorId + " нет песни с ID " + songId + ".");
+        }
+
+        fileMetadataRepository.deleteByObjectName(song.get().getFileId());
+        fileMetadataRepository.deleteByObjectName(song.get().getCoverId());
+        songRepository.delete(song.get());
     }
 
     private UUID getAuthenticatedUserId() {

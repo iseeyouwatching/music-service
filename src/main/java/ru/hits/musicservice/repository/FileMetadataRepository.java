@@ -12,4 +12,6 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadataEntity
 
     Optional<FileMetadataEntity> findByObjectName(UUID id);
 
+    void deleteByObjectName(UUID objectName);
+
 }
