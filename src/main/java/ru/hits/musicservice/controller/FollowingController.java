@@ -41,7 +41,7 @@ public class FollowingController {
     }
 
     @Operation(
-            summary = "Получить список подписок.",
+            summary = "Получить список подписок пользователя.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{userId}")

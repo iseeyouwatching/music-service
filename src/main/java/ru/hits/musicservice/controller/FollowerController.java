@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.hits.musicservice.dto.FollowerInfoDto;
-import ru.hits.musicservice.service.FollowersService;
+import ru.hits.musicservice.service.FollowerService;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,9 +20,9 @@ import java.util.UUID;
 @RequestMapping("/api/subscribers")
 @RequiredArgsConstructor
 @Tag(name = "Подписчики.")
-public class FollowersController {
+public class FollowerController {
 
-    private final FollowersService followersService;
+    private final FollowerService followerService;
 
     @Operation(
             summary = "Получить список подписчиков пользователя.",
@@ -30,7 +30,7 @@ public class FollowersController {
     )
     @GetMapping("/{userId}")
     public ResponseEntity<List<FollowerInfoDto>> getFollowers(@PathVariable("userId") UUID userId) {
-        return new ResponseEntity<>(followersService.getFollowers(userId), HttpStatus.OK);
+        return new ResponseEntity<>(followerService.getFollowers(userId), HttpStatus.OK);
     }
 
 }

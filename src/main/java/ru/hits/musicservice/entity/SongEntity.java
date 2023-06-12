@@ -4,8 +4,8 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -46,5 +46,8 @@ public class SongEntity {
 
     @Column(name = "file_id")
     private UUID fileId;
+
+    @OneToMany(mappedBy = "song", cascade = CascadeType.REMOVE)
+    private List<LikeEntity> likes;
 
 }

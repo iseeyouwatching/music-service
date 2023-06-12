@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import ru.hits.musicservice.enumeration.Gender;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -54,8 +53,5 @@ public class UserEntity {
 
     @Column(name = "subscribers_count")
     private int subscribersCount;
-
-    @OneToMany(mappedBy = "user")
-    private List<TrackEntity> tracks;
 
 }

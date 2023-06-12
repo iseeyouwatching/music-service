@@ -12,8 +12,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(name = "track")
-public class TrackEntity {
+@Table(name = "_like")
+public class LikeEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -23,21 +23,12 @@ public class TrackEntity {
     )
     private UUID id;
 
-    @Column(name = "uploader_username")
-    private String uploaderUsername;
-
-    private String name;
-
-    @Column(name = "likes_count")
-    private Integer likesCount;
-
-    private String description;
-
-    @Column(name = "is_public")
-    private boolean isPublic;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "song_id")
+    private SongEntity song;
 
 }
