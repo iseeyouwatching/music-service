@@ -44,9 +44,9 @@ public class FollowingController {
             summary = "Получить список подписок.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @GetMapping
-    public ResponseEntity<List<FollowingUserInfoDto>> getFollowings() {
-        return new ResponseEntity<>(followingService.getFollowings(), HttpStatus.OK);
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<FollowingUserInfoDto>> getFollowings(@PathVariable("userId") UUID userId) {
+        return new ResponseEntity<>(followingService.getFollowings(userId), HttpStatus.OK);
     }
 
 }

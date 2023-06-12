@@ -2,6 +2,7 @@ package ru.hits.musicservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.AddSongDto;
 import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.entity.SongEntity;
+import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.FileMetadataRepository;
 import ru.hits.musicservice.repository.SongRepository;
@@ -16,6 +18,8 @@ import ru.hits.musicservice.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -72,6 +76,24 @@ public class SongService {
         fileMetadataRepository.deleteByObjectName(song.get().getFileId());
         fileMetadataRepository.deleteByObjectName(song.get().getCoverId());
         songRepository.delete(song.get());
+    }
+
+    public List<SongInfoDto> getUploadedSongs(UUID userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
+        }
+
+        List<SongEntity> songs = songRepository.findAllByAuthorId(userId,
+                Sort.by(Sort.Direction.DESC, "uploadDate"));
+
+        List<SongInfoDto> result = new ArrayList<>();
+        for (SongEntity song : songs) {
+            result.add(new SongInfoDto(song));
+        }
+
+        return result;
     }
 
     private UUID getAuthenticatedUserId() {

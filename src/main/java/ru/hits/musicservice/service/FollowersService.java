@@ -24,13 +24,11 @@ public class FollowersService {
     private final UserRepository userRepository;
     private final FollowerRepository followerRepository;
 
-    public List<FollowerInfoDto> getFollowers() {
-        UUID authenticatedUserId = getAuthenticatedUserId();
-
+    public List<FollowerInfoDto> getFollowers(UUID userId) {
         Example<FollowerEntity> example = Example.of(FollowerEntity
                 .builder()
                 .isFollowing(true)
-                .artistId(authenticatedUserId)
+                .artistId(userId)
                 .build());
 
         List<FollowerEntity> followerEntities =
@@ -49,11 +47,6 @@ public class FollowersService {
         }
 
         return followersResult;
-    }
-
-    private UUID getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (UUID) authentication.getPrincipal();
     }
 
 }

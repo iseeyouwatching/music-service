@@ -115,24 +115,6 @@ public class UserService {
         return new UserProfileDto(savedUser);
     }
 
-    public List<SongInfoDto> getUploadedSongs(UUID userId) {
-        Optional<UserEntity> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
-        }
-
-        List<SongEntity> songs = songRepository.findAllByAuthorId(userId,
-                Sort.by(Sort.Direction.DESC, "uploadDate"));
-
-        List<SongInfoDto> result = new ArrayList<>();
-        for (SongEntity song : songs) {
-            result.add(new SongInfoDto(song));
-        }
-
-        return result;
-    }
-
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {
         if (userUpdateInfoDto.getAvatar() != null) {
             if (fileMetadataRepository.findByObjectName(userUpdateInfoDto.getAvatar()).isEmpty()) {

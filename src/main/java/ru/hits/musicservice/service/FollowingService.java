@@ -93,13 +93,11 @@ public class FollowingService {
         return new FollowerDto(subscriber.get());
     }
 
-    public List<FollowingUserInfoDto> getFollowings() {
-        UUID authenticatedUserId = getAuthenticatedUserId();
-
+    public List<FollowingUserInfoDto> getFollowings(UUID userId) {
         Example<FollowerEntity> example = Example.of(FollowerEntity
                 .builder()
                 .isFollowing(true)
-                .followerId(authenticatedUserId)
+                .followerId(userId)
                 .build());
 
         List<FollowerEntity> followings =

@@ -12,6 +12,7 @@ import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.service.SongService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -39,6 +40,15 @@ public class SongController {
     public ResponseEntity<Void> deleteSong(@PathVariable("id") UUID songId) {
         songService.deleteSong(songId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Получить загруженные пользователем треки.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/{userId}/uploaded-songs")
+    public ResponseEntity<List<SongInfoDto>> getUploadedSongs(@PathVariable("userId") UUID userId) {
+        return new ResponseEntity<>(songService.getUploadedSongs(userId), HttpStatus.OK);
     }
 
 }
