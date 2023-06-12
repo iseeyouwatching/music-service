@@ -1,10 +1,12 @@
 package ru.hits.musicservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.entity.LikeEntity;
 import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
@@ -14,6 +16,9 @@ import ru.hits.musicservice.repository.LikeRepository;
 import ru.hits.musicservice.repository.SongRepository;
 import ru.hits.musicservice.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,12 +47,14 @@ public class LikeService {
         LikeEntity like = LikeEntity.builder()
                 .user(user)
                 .song(song)
+                .likeDate(LocalDateTime.now())
                 .build();
         likeRepository.save(like);
         song.setLikesCount(song.getLikesCount() + 1);
         songRepository.save(song);
     }
 
+    @Transactional
     public void takeLikeOffTheSong(UUID songId) {
         UUID authenticatedUserId = getAuthenticatedUserId();
 
@@ -68,6 +75,24 @@ public class LikeService {
             song.setLikesCount(song.getLikesCount() - 1);
             songRepository.save(song);
         }
+    }
+
+    public List<SongInfoDto> getLikedSongs(UUID userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
+        }
+
+        List<LikeEntity> likes = likeRepository.findAllByUser(user.get(),
+                Sort.by(Sort.Direction.DESC, "likeDate"));
+
+        List<SongInfoDto> result = new ArrayList<>();
+        for (LikeEntity like: likes) {
+            result.add(new SongInfoDto(like.getSong()));
+        }
+
+        return result;
     }
 
     private UUID getAuthenticatedUserId() {

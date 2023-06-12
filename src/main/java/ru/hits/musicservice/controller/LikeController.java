@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.service.LikeService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -37,5 +39,14 @@ public class LikeController {
     public ResponseEntity<Void> takeLikeOffTheSong(@PathVariable("songId") UUID songId) {
         likeService.takeLikeOffTheSong(songId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Получить лайкнутые пользователем песни.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<SongInfoDto>> getLikedSongs(@PathVariable("userId") UUID userId) {
+        return new ResponseEntity<>(likeService.getLikedSongs(userId), HttpStatus.OK);
     }
 }
