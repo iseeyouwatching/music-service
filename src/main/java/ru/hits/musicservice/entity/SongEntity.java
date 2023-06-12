@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -36,7 +37,7 @@ public class SongEntity {
     private UUID authorId;
 
     @Column(name = "upload_date")
-    private LocalDate uploadDate;
+    private LocalDateTime uploadDate;
 
     private String description;
 

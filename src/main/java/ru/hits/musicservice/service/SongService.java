@@ -15,6 +15,7 @@ import ru.hits.musicservice.repository.SongRepository;
 import ru.hits.musicservice.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,7 +45,7 @@ public class SongService {
                 .name(addSongDto.getName())
                 .authorUsername(userRepository.findById(authorId).get().getUsername())
                 .authorId(authorId)
-                .uploadDate(LocalDate.now())
+                .uploadDate(LocalDateTime.now())
                 .description(addSongDto.getDescription())
                 .likesCount(0)
                 .fileId(addSongDto.getFileId())

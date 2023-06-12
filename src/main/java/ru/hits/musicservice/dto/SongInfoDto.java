@@ -5,6 +5,7 @@ import lombok.*;
 import ru.hits.musicservice.entity.SongEntity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -25,7 +26,7 @@ public class SongInfoDto {
     private UUID authorId;
 
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate uploadDate;
+    private LocalDateTime uploadDate;
 
     private String description;
 

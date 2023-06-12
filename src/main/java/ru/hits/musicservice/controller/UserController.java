@@ -71,9 +71,9 @@ public class UserController {
             summary = "Получить загруженные пользователем треки.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @GetMapping("/{userId}/uploaded-tracks")
-    public ResponseEntity<List<IncompleteTrackInfoDto>> getUploadedTracks(@PathVariable("userId") UUID userId) {
-        return new ResponseEntity<>(userService.getUploadedTracks(userId), HttpStatus.OK);
+    @GetMapping("/{userId}/uploaded-songs")
+    public ResponseEntity<List<SongInfoDto>> getUploadedSongs(@PathVariable("userId") UUID userId) {
+        return new ResponseEntity<>(userService.getUploadedSongs(userId), HttpStatus.OK);
     }
 
 }
