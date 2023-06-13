@@ -3,6 +3,8 @@ package ru.hits.musicservice.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.hits.musicservice.dto.FollowerInfoDto;
 import ru.hits.musicservice.entity.FollowerEntity;
@@ -37,14 +39,31 @@ public class FollowerService {
         for (FollowerEntity follower: followerEntities) {
             Optional<UserEntity> user = userRepository.findById(follower.getFollowerId());
 
-            user.ifPresent(userEntity -> followersResult.add(new FollowerInfoDto(
-                    userEntity.getId(),
-                    userEntity.getAvatar(),
-                    userEntity.getUsername(),
-                    userEntity.getFollowersCount())));
+            if (followerRepository.findByArtistIdAndFollowerId(user.get().getId(), getAuthenticatedUserId()).isPresent()
+            && followerRepository.findByArtistIdAndFollowerId(user.get().getId(), getAuthenticatedUserId()).get().isFollowing()) {
+                user.ifPresent(userEntity -> followersResult.add(new FollowerInfoDto(
+                        userEntity.getId(),
+                        userEntity.getAvatar(),
+                        userEntity.getUsername(),
+                        userEntity.getFollowersCount(),
+                                true)));
+            } else {
+                user.ifPresent(userEntity -> followersResult.add(new FollowerInfoDto(
+                        userEntity.getId(),
+                        userEntity.getAvatar(),
+                        userEntity.getUsername(),
+                        userEntity.getFollowersCount(),
+                        false)));
+            }
+
         }
 
         return followersResult;
+    }
+
+    private UUID getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (UUID) authentication.getPrincipal();
     }
 
 }

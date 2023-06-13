@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SongInfoDto {
+public class SearchedSongDto {
 
     private UUID id;
 
@@ -24,9 +24,6 @@ public class SongInfoDto {
 
     private UUID authorId;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDateTime uploadDate;
-
     private String description;
 
     private int likesCount;
@@ -35,13 +32,12 @@ public class SongInfoDto {
 
     private boolean isLiked;
 
-    public SongInfoDto(SongEntity song, boolean isLiked) {
+    public SearchedSongDto(SongEntity song, boolean isLiked) {
         this.id = song.getId();
         this.coverId = song.getCoverId();
         this.name = song.getName();
         this.authorUsername = song.getAuthorUsername();
         this.authorId = song.getAuthorId();
-        this.uploadDate = song.getUploadDate();
         this.description = song.getDescription();
         this.likesCount = song.getLikesCount();
         this.fileId = song.getFileId();

@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hits.musicservice.dto.AddSongDto;
+import ru.hits.musicservice.dto.SearchStringDto;
+import ru.hits.musicservice.dto.SearchedSongDto;
 import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.service.SongService;
 
@@ -58,6 +60,15 @@ public class SongController {
     @GetMapping("/{id}")
     public ResponseEntity<SongInfoDto> getSongInfo(@PathVariable("id") UUID songId) {
         return new ResponseEntity<>(songService.getSongInfo(songId), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Поиск песен.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/search")
+    public ResponseEntity<List<SearchedSongDto>> searchSongs(@RequestBody @Valid SearchStringDto searchStringDto) {
+        return new ResponseEntity<>(songService.searchSongs(searchStringDto), HttpStatus.OK);
     }
 
 }

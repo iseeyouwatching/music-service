@@ -113,7 +113,7 @@ public class LikeService {
 
         List<SongInfoDto> result = new ArrayList<>();
         for (LikeEntity like: likes) {
-            result.add(new SongInfoDto(like.getSong()));
+            result.add(new SongInfoDto(like.getSong(), true));
         }
 
         return result;

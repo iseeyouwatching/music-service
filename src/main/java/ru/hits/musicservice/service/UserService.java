@@ -25,10 +25,7 @@ import ru.hits.musicservice.security.JWTUtil;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -133,12 +130,15 @@ public class UserService {
 
         List<SearchedUserDto> result = new ArrayList<>();
         for (UserEntity user: searchedUsers) {
-            if (followerRepository.findByArtistIdAndFollowerId(user.getId(), authenticatedUserId).isPresent()) {
+            if (followerRepository.findByArtistIdAndFollowerId(user.getId(), authenticatedUserId).isPresent()
+            && followerRepository.findByArtistIdAndFollowerId(user.getId(), authenticatedUserId).get().isFollowing()) {
                 result.add(new SearchedUserDto(user, true));
             } else {
                 result.add(new SearchedUserDto(user, false));
             }
         }
+
+        result.sort(Comparator.comparing(SearchedUserDto::isFollowing, Comparator.reverseOrder()));
 
         return result;
     }

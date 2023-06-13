@@ -19,4 +19,6 @@ public class FollowingUserInfoDto {
 
     private int subscribersCount;
 
+    private boolean isFollowing;
+
 }

@@ -6,8 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.hits.musicservice.dto.AddSongDto;
-import ru.hits.musicservice.dto.SongInfoDto;
+import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.entity.LikeEntity;
 import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
@@ -55,7 +54,7 @@ public class SongService {
         uploader.setUploadedSongsCount(uploader.getUploadedSongsCount() + 1);
         userRepository.save(uploader);
 
-        return new SongInfoDto(song);
+        return new SongInfoDto(song, false);
     }
 
     @Transactional
@@ -103,8 +102,32 @@ public class SongService {
 
         List<SongInfoDto> result = new ArrayList<>();
         for (SongEntity song : songs) {
-            result.add(new SongInfoDto(song));
+            if (likeRepository.findByUserAndSong(userRepository.findById(getAuthenticatedUserId()).get(), song).isPresent()) {
+                result.add(new SongInfoDto(song, true));
+            } else {
+                result.add(new SongInfoDto(song, false));
+            }
         }
+
+        return result;
+    }
+
+    public List<SearchedSongDto> searchSongs(SearchStringDto searchStringDto) {
+        UUID authenticatedUserId = getAuthenticatedUserId();
+
+        List<SongEntity> searchedSongs =
+                songRepository.findByNameWildcard(searchStringDto.getSearchString().toLowerCase());
+
+        List<SearchedSongDto> result = new ArrayList<>();
+        for (SongEntity song: searchedSongs) {
+            if (likeRepository.findByUserAndSong(userRepository.findById(authenticatedUserId).get(), song).isPresent()) {
+                result.add(new SearchedSongDto(song, true));
+            } else {
+                result.add(new SearchedSongDto(song, false));
+            }
+        }
+
+        result.sort(Comparator.comparing(SearchedSongDto::isLiked, Comparator.reverseOrder()));
 
         return result;
     }
@@ -116,7 +139,11 @@ public class SongService {
             throw new NotFoundException("Песни с ID " + songId + " не существует.");
         }
 
-        return new SongInfoDto(song.get());
+        if (likeRepository.findByUserAndSong(userRepository.findById(getAuthenticatedUserId()).get(), song.get()).isPresent()) {
+            return new SongInfoDto(song.get(), true);
+        } else {
+            return new SongInfoDto(song.get(), false);
+        }
     }
 
     private UUID getAuthenticatedUserId() {

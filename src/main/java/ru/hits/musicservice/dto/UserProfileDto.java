@@ -4,7 +4,6 @@ import lombok.*;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.enumeration.Gender;
 
-import javax.persistence.Column;
 import java.util.UUID;
 
 @Data

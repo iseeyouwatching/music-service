@@ -51,6 +51,32 @@ public class FollowingService {
                     + userId + ".");
         }
 
+        if (subscriber.isPresent()) {
+            subscriber.get().setFollowingDate(LocalDateTime.now());
+            subscriber.get().setUnfollowingDate(null);
+            subscriber.get().setFollowing(true);
+            subscriber.get().setArtistId(userId);
+            subscriber.get().setFollowerId(followerId);
+            subscriber = Optional.of(followerRepository.save(subscriber.get()));
+
+            user.get().setFollowersCount(user.get().getFollowersCount() + 1);
+            userRepository.save(user.get());
+
+            Optional<UserEntity> authenticatedUser = userRepository.findById(followerId);
+            authenticatedUser.get().setFollowingCount(authenticatedUser.get().getFollowingCount() + 1);
+            userRepository.save(authenticatedUser.get());
+
+            NotificationEntity notification = NotificationEntity.builder()
+                    .type(NotificationType.FOLLOW)
+                    .text("Пользователь с ID " + followerId + " подписался на пользователя с ID " + userId + ".")
+                    .userId(userId)
+                    .sendDate(LocalDateTime.now())
+                    .build();
+            notificationRepository.save(notification);
+
+            return new FollowerDto(subscriber.get());
+        }
+
         FollowerEntity subscriberResult = FollowerEntity.builder()
                 .followingDate(LocalDateTime.now())
                 .unfollowingDate(null)
@@ -76,6 +102,7 @@ public class FollowingService {
         notificationRepository.save(notification);
 
         return new FollowerDto(subscriberResult);
+
     }
 
     @Transactional
@@ -133,11 +160,22 @@ public class FollowingService {
         for (FollowerEntity following: followings) {
             Optional<UserEntity> user = userRepository.findById(following.getArtistId());
 
-            user.ifPresent(userEntity -> followingUserInfoDtos.add(new FollowingUserInfoDto(
-                    userEntity.getId(),
-                    userEntity.getAvatar(),
-                    userEntity.getUsername(),
-                    userEntity.getFollowersCount())));
+            if (followerRepository.findByArtistIdAndFollowerId(user.get().getId(), getAuthenticatedUserId()).isPresent()
+            && followerRepository.findByArtistIdAndFollowerId(user.get().getId(), getAuthenticatedUserId()).get().isFollowing()) {
+                user.ifPresent(userEntity -> followingUserInfoDtos.add(new FollowingUserInfoDto(
+                        userEntity.getId(),
+                        userEntity.getAvatar(),
+                        userEntity.getUsername(),
+                        userEntity.getFollowersCount(),
+                        true)));
+            } else {
+                user.ifPresent(userEntity -> followingUserInfoDtos.add(new FollowingUserInfoDto(
+                        userEntity.getId(),
+                        userEntity.getAvatar(),
+                        userEntity.getUsername(),
+                        userEntity.getFollowersCount(),
+                        false)));
+            }
         }
 
         return followingUserInfoDtos;
