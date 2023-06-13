@@ -8,11 +8,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.SongInfoDto;
 import ru.hits.musicservice.entity.LikeEntity;
+import ru.hits.musicservice.entity.NotificationEntity;
 import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
+import ru.hits.musicservice.enumeration.NotificationType;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.LikeRepository;
+import ru.hits.musicservice.repository.NotificationRepository;
 import ru.hits.musicservice.repository.SongRepository;
 import ru.hits.musicservice.repository.UserRepository;
 
@@ -29,6 +32,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final SongRepository songRepository;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public void likeSong(UUID songId) {
@@ -50,8 +54,17 @@ public class LikeService {
                 .likeDate(LocalDateTime.now())
                 .build();
         likeRepository.save(like);
+
         song.setLikesCount(song.getLikesCount() + 1);
-        songRepository.save(song);
+        song = songRepository.save(song);
+
+        NotificationEntity notification = NotificationEntity.builder()
+                .type(NotificationType.LIKE_SONG)
+                .text("Пользователь с ID " + authenticatedUserId + " лайкнул трек с ID " + song.getId() + ".")
+                .userId(song.getAuthorId())
+                .sendDate(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
     }
 
     @Transactional
@@ -73,8 +86,11 @@ public class LikeService {
 
         if (song.getLikesCount() != 0) {
             song.setLikesCount(song.getLikesCount() - 1);
-            songRepository.save(song);
+            song = songRepository.save(song);
         }
+
+        notificationRepository.deleteByText("Пользователь с ID " + authenticatedUserId
+                + " лайкнул трек с ID " + song.getId() + ".");
     }
 
     public List<SongInfoDto> getLikedSongs(UUID userId) {

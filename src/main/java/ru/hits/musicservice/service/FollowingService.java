@@ -11,10 +11,13 @@ import ru.hits.musicservice.dto.FollowerDto;
 import ru.hits.musicservice.dto.FollowerInfoDto;
 import ru.hits.musicservice.dto.FollowingUserInfoDto;
 import ru.hits.musicservice.entity.FollowerEntity;
+import ru.hits.musicservice.entity.NotificationEntity;
 import ru.hits.musicservice.entity.UserEntity;
+import ru.hits.musicservice.enumeration.NotificationType;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.FollowerRepository;
+import ru.hits.musicservice.repository.NotificationRepository;
 import ru.hits.musicservice.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -29,6 +32,7 @@ public class FollowingService {
 
     private final FollowerRepository followerRepository;
     private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public FollowerDto subscribe(UUID userId) {
@@ -58,6 +62,14 @@ public class FollowingService {
         subscriberResult = followerRepository.save(subscriberResult);
         user.get().setSubscribersCount(user.get().getSubscribersCount() + 1);
         userRepository.save(user.get());
+
+        NotificationEntity notification = NotificationEntity.builder()
+                .type(NotificationType.FOLLOW)
+                .text("Пользователь с ID " + followerId + " подписался на пользователя с ID " + userId + ".")
+                .userId(userId)
+                .sendDate(LocalDateTime.now())
+                .build();
+        notificationRepository.save(notification);
 
         return new FollowerDto(subscriberResult);
     }
@@ -89,6 +101,9 @@ public class FollowingService {
             user.get().setSubscribersCount(user.get().getSubscribersCount() - 1);
             userRepository.save(user.get());
         }
+
+        notificationRepository.deleteByText("Пользователь с ID " + followerId
+                + " подписался на пользователя с ID " + userId + ".");
 
         return new FollowerDto(subscriber.get());
     }
