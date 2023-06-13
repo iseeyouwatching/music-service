@@ -10,6 +10,7 @@ import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.entity.LikeEntity;
 import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
+import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.FileMetadataRepository;
 import ru.hits.musicservice.repository.LikeRepository;
@@ -138,6 +139,41 @@ public class SongService {
         if (song.isEmpty()) {
             throw new NotFoundException("Песни с ID " + songId + " не существует.");
         }
+
+        if (likeRepository.findByUserAndSong(userRepository.findById(getAuthenticatedUserId()).get(), song.get()).isPresent()) {
+            return new SongInfoDto(song.get(), true);
+        } else {
+            return new SongInfoDto(song.get(), false);
+        }
+    }
+
+    public SongInfoDto updateSongInfoDto(UUID songId, UpdateSongInfoDto updateSongInfoDto) {
+        if (songRepository.findById(songId).isEmpty()) {
+            throw new NotFoundException("Песни с ID " + songId + " не существует.");
+        }
+
+        UUID authenticatedUserId = getAuthenticatedUserId();
+        Optional<SongEntity> song = songRepository.findByIdAndAuthorId(songId, authenticatedUserId);
+        if (song.isEmpty()) {
+            throw new ConflictException("Песня с ID " + songId + " не принадлежит пользователю с ID " + authenticatedUserId + ".");
+        }
+
+        if (updateSongInfoDto.getCoverId() != null) {
+            if (fileMetadataRepository.findByObjectName(updateSongInfoDto.getCoverId()).isEmpty()) {
+                throw new NotFoundException("Файла с ID " + updateSongInfoDto.getCoverId() + " не существует.");
+            }
+            song.get().setCoverId(updateSongInfoDto.getCoverId());
+        }
+
+        if (updateSongInfoDto.getName() != null) {
+            song.get().setName(updateSongInfoDto.getName());
+        }
+
+        if (updateSongInfoDto.getDescription() != null) {
+            song.get().setDescription(updateSongInfoDto.getDescription());
+        }
+
+        song = Optional.of(songRepository.save(song.get()));
 
         if (likeRepository.findByUserAndSong(userRepository.findById(getAuthenticatedUserId()).get(), song.get()).isPresent()) {
             return new SongInfoDto(song.get(), true);

@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hits.musicservice.dto.AddSongDto;
-import ru.hits.musicservice.dto.SearchStringDto;
-import ru.hits.musicservice.dto.SearchedSongDto;
-import ru.hits.musicservice.dto.SongInfoDto;
+import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.service.SongService;
 
 import javax.validation.Valid;
@@ -71,4 +68,12 @@ public class SongController {
         return new ResponseEntity<>(songService.searchSongs(searchStringDto), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Обновление данных песни.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<SongInfoDto> updateSongInfo(@PathVariable("id") UUID songId, @RequestBody @Valid UpdateSongInfoDto updateSongInfoDto) {
+        return new ResponseEntity<>(songService.updateSongInfoDto(songId, updateSongInfoDto), HttpStatus.OK);
+    }
 }
