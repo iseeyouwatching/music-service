@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.hits.musicservice.dto.NotificationDto;
 import ru.hits.musicservice.service.NotificationService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

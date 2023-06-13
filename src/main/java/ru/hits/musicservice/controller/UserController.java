@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -73,6 +74,15 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserProfileDto> getUserInfo(@PathVariable("id") UUID userId) {
         return new ResponseEntity<>(userService.getUserInfo(userId), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Поиск пользователей.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/search")
+    public ResponseEntity<List<SearchedUserDto>> searchUsers(@RequestBody @Valid SearchStringDto searchStringDto) {
+        return new ResponseEntity<>(userService.searchUsers(searchStringDto), HttpStatus.OK);
     }
 
 

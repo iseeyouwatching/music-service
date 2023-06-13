@@ -3,6 +3,8 @@ package ru.hits.musicservice.service;
 import io.minio.errors.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +17,7 @@ import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.exception.UnauthorizedException;
 import ru.hits.musicservice.repository.FileMetadataRepository;
+import ru.hits.musicservice.repository.FollowerRepository;
 import ru.hits.musicservice.repository.SongRepository;
 import ru.hits.musicservice.repository.UserRepository;
 import ru.hits.musicservice.security.JWTUtil;
@@ -22,6 +25,8 @@ import ru.hits.musicservice.security.JWTUtil;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,7 +39,7 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final JWTUtil jwtUtil;
     private final FileService fileService;
-    private final SongRepository songRepository;
+    private final FollowerRepository followerRepository;
     private final FileMetadataRepository fileMetadataRepository;
 
     @Transactional
@@ -118,6 +123,24 @@ public class UserService {
         }
 
         return new UserProfileDto(user.get());
+    }
+
+    public List<SearchedUserDto> searchUsers(SearchStringDto searchStringDto) {
+        UUID authenticatedUserId = getAuthenticatedUserId();
+
+        List<UserEntity> searchedUsers =
+                userRepository.findByUsernameWildcard(searchStringDto.getSearchString().toLowerCase());
+
+        List<SearchedUserDto> result = new ArrayList<>();
+        for (UserEntity user: searchedUsers) {
+            if (followerRepository.findByArtistIdAndFollowerId(user.getId(), authenticatedUserId).isPresent()) {
+                result.add(new SearchedUserDto(user, true));
+            } else {
+                result.add(new SearchedUserDto(user, false));
+            }
+        }
+
+        return result;
     }
 
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {

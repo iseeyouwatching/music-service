@@ -46,7 +46,6 @@ public class UserProfileDto {
 
     private int uploadedSongsCount;
 
-
     public UserProfileDto(UserEntity user) {
         this.id = user.getId();
         this.email = user.getEmail();
