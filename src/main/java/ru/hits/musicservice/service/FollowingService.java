@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.FollowerDto;
-import ru.hits.musicservice.dto.FollowerInfoDto;
 import ru.hits.musicservice.dto.FollowingUserInfoDto;
 import ru.hits.musicservice.entity.FollowerEntity;
 import ru.hits.musicservice.entity.NotificationEntity;
@@ -60,8 +59,13 @@ public class FollowingService {
                 .followerId(followerId)
                 .build();
         subscriberResult = followerRepository.save(subscriberResult);
-        user.get().setSubscribersCount(user.get().getSubscribersCount() + 1);
+
+        user.get().setFollowersCount(user.get().getFollowersCount() + 1);
         userRepository.save(user.get());
+
+        Optional<UserEntity> authenticatedUser = userRepository.findById(followerId);
+        authenticatedUser.get().setFollowingCount(authenticatedUser.get().getFollowingCount() + 1);
+        userRepository.save(authenticatedUser.get());
 
         NotificationEntity notification = NotificationEntity.builder()
                 .type(NotificationType.FOLLOW)
@@ -97,9 +101,15 @@ public class FollowingService {
         subscriber.get().setFollowing(false);
         subscriber = Optional.of(followerRepository.save(subscriber.get()));
 
-        if (user.get().getSubscribersCount() != 0) {
-            user.get().setSubscribersCount(user.get().getSubscribersCount() - 1);
+        if (user.get().getFollowersCount() != 0) {
+            user.get().setFollowersCount(user.get().getFollowersCount() - 1);
             userRepository.save(user.get());
+        }
+
+        Optional<UserEntity> authenticatedUser = userRepository.findById(followerId);
+        if (authenticatedUser.get().getFollowingCount() != 0) {
+            authenticatedUser.get().setFollowingCount(authenticatedUser.get().getFollowingCount() - 1);
+            userRepository.save(authenticatedUser.get());
         }
 
         notificationRepository.deleteByText("Пользователь с ID " + followerId
@@ -127,7 +137,7 @@ public class FollowingService {
                     userEntity.getId(),
                     userEntity.getAvatar(),
                     userEntity.getUsername(),
-                    userEntity.getSubscribersCount())));
+                    userEntity.getFollowersCount())));
         }
 
         return followingUserInfoDtos;

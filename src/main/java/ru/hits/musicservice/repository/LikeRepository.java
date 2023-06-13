@@ -18,4 +18,6 @@ public interface LikeRepository extends JpaRepository<LikeEntity, UUID> {
 
     List<LikeEntity> findAllByUser(UserEntity user, Sort sort);
 
+    List<LikeEntity> findAllBySong(SongEntity song);
+
 }

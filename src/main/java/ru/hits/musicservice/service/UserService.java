@@ -48,7 +48,10 @@ public class UserService {
         }
 
         UserEntity user = modelMapper.map(userSignUpDto, UserEntity.class);
-        user.setSubscribersCount(0);
+        user.setFollowersCount(0);
+        user.setFollowingCount(0);
+        user.setLikesCount(0);
+        user.setUploadedSongsCount(0);
         user.setPassword(bCryptPasswordEncoder.encode(userSignUpDto.getPassword()));
         user = userRepository.save(user);
 
@@ -105,6 +108,16 @@ public class UserService {
 
         UserEntity savedUser = userRepository.save(user.get());
         return new UserProfileDto(savedUser);
+    }
+
+    public UserProfileDto getUserInfo(UUID userId) {
+        Optional<UserEntity> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
+        }
+
+        return new UserProfileDto(user.get());
     }
 
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {

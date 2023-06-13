@@ -51,7 +51,16 @@ public class UserEntity {
     @Column(name = "header_image")
     private UUID headerImage;
 
-    @Column(name = "subscribers_count")
-    private int subscribersCount;
+    @Column(name = "followers_count")
+    private int followersCount;
+
+    @Column(name = "following_count")
+    private int followingCount;
+
+    @Column(name = "likes_count")
+    private int likesCount;
+
+    @Column(name = "uploaded_songs_count")
+    private int uploadedSongsCount;
 
 }

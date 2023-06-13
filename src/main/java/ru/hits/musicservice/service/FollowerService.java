@@ -41,7 +41,7 @@ public class FollowerService {
                     userEntity.getId(),
                     userEntity.getAvatar(),
                     userEntity.getUsername(),
-                    userEntity.getSubscribersCount())));
+                    userEntity.getFollowersCount())));
         }
 
         return followersResult;

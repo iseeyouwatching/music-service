@@ -1,8 +1,6 @@
 package ru.hits.musicservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.nullness.Opt;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,31 +8,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.AddSongDto;
 import ru.hits.musicservice.dto.SongInfoDto;
+import ru.hits.musicservice.entity.LikeEntity;
 import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.repository.FileMetadataRepository;
+import ru.hits.musicservice.repository.LikeRepository;
 import ru.hits.musicservice.repository.SongRepository;
 import ru.hits.musicservice.repository.UserRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class SongService {
 
     private final SongRepository songRepository;
-
     private final UserRepository userRepository;
-
     private final FileMetadataRepository fileMetadataRepository;
-
-    private final ModelMapper modelMapper;
+    private final LikeRepository likeRepository;
 
     @Transactional
     public SongInfoDto addSong(AddSongDto addSongDto) {
@@ -58,6 +51,10 @@ public class SongService {
 
         song = songRepository.save(song);
 
+        UserEntity uploader = userRepository.findById(authorId).get();
+        uploader.setUploadedSongsCount(uploader.getUploadedSongsCount() + 1);
+        userRepository.save(uploader);
+
         return new SongInfoDto(song);
     }
 
@@ -74,9 +71,24 @@ public class SongService {
             throw new NotFoundException("У пользователя с ID " + authorId + " нет песни с ID " + songId + ".");
         }
 
+        List<LikeEntity> likes = likeRepository.findAllBySong(song.get());
+        for (LikeEntity like: likes) {
+            UserEntity user = like.getUser();
+            if (user.getLikesCount() != 0) {
+                user.setLikesCount(user.getLikesCount() - 1);
+                userRepository.save(user);
+            }
+        }
+
         fileMetadataRepository.deleteByObjectName(song.get().getFileId());
         fileMetadataRepository.deleteByObjectName(song.get().getCoverId());
         songRepository.delete(song.get());
+
+        UserEntity uploader = userRepository.findById(authorId).get();
+        if (uploader.getUploadedSongsCount() != 0) {
+            uploader.setUploadedSongsCount(uploader.getUploadedSongsCount() - 1);
+            userRepository.save(uploader);
+        }
     }
 
     public List<SongInfoDto> getUploadedSongs(UUID userId) {

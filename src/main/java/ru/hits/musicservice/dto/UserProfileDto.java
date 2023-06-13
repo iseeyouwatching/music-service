@@ -4,6 +4,7 @@ import lombok.*;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.enumeration.Gender;
 
+import javax.persistence.Column;
 import java.util.UUID;
 
 @Data
@@ -37,7 +38,14 @@ public class UserProfileDto {
 
     private UUID headerImage;
 
-    private int subscribersCount;
+    private int followersCount;
+
+    private int followingCount;
+
+    private int likesCount;
+
+    private int uploadedSongsCount;
+
 
     public UserProfileDto(UserEntity user) {
         this.id = user.getId();
@@ -52,7 +60,10 @@ public class UserProfileDto {
         this.bio = user.getBio();
         this.avatar = user.getAvatar();
         this.headerImage = user.getHeaderImage();
-        this.subscribersCount = user.getSubscribersCount();
+        this.followersCount = user.getFollowersCount();
+        this.followingCount = user.getFollowingCount();
+        this.likesCount = user.getLikesCount();
+        this.uploadedSongsCount = user.getUploadedSongsCount();
     }
 
 }

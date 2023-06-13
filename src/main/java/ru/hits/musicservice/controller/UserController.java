@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -63,6 +64,15 @@ public class UserController {
     @PutMapping(value = "/upload-header-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserProfileDto> uploadHeaderImage(@RequestParam("file") MultipartFile headerImage) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         return new ResponseEntity<>(userService.uploadHeaderImage(headerImage), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Просмотр данных профиля пользователя по ID.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<UserProfileDto> getUserInfo(@PathVariable("id") UUID userId) {
+        return new ResponseEntity<>(userService.getUserInfo(userId), HttpStatus.OK);
     }
 
 

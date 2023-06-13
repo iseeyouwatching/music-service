@@ -58,6 +58,9 @@ public class LikeService {
         song.setLikesCount(song.getLikesCount() + 1);
         song = songRepository.save(song);
 
+        user.setLikesCount(user.getLikesCount() + 1);
+        userRepository.save(user);
+
         NotificationEntity notification = NotificationEntity.builder()
                 .type(NotificationType.LIKE_SONG)
                 .text("Пользователь с ID " + authenticatedUserId + " лайкнул трек с ID " + song.getId() + ".")
@@ -87,6 +90,11 @@ public class LikeService {
         if (song.getLikesCount() != 0) {
             song.setLikesCount(song.getLikesCount() - 1);
             song = songRepository.save(song);
+        }
+
+        if (user.getLikesCount() != 0) {
+            user.setLikesCount(user.getLikesCount() - 1);
+            userRepository.save(user);
         }
 
         notificationRepository.deleteByText("Пользователь с ID " + authenticatedUserId
