@@ -43,12 +43,21 @@ public class SongController {
     }
 
     @Operation(
-            summary = "Получить загруженные пользователем треки.",
+            summary = "Получить загруженные пользователем песни.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @GetMapping("/{userId}/uploaded-songs")
     public ResponseEntity<List<SongInfoDto>> getUploadedSongs(@PathVariable("userId") UUID userId) {
         return new ResponseEntity<>(songService.getUploadedSongs(userId), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Получить информацию о песне по ID.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<SongInfoDto> getSongInfo(@PathVariable("id") UUID songId) {
+        return new ResponseEntity<>(songService.getSongInfo(songId), HttpStatus.OK);
     }
 
 }

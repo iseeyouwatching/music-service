@@ -1,6 +1,7 @@
 package ru.hits.musicservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.nullness.Opt;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
@@ -94,6 +95,16 @@ public class SongService {
         }
 
         return result;
+    }
+
+    public SongInfoDto getSongInfo(UUID songId) {
+        Optional<SongEntity> song = songRepository.findById(songId);
+
+        if (song.isEmpty()) {
+            throw new NotFoundException("Песни с ID " + songId + " не существует.");
+        }
+
+        return new SongInfoDto(song.get());
     }
 
     private UUID getAuthenticatedUserId() {
