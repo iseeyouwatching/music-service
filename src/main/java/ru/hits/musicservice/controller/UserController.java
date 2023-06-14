@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.service.UserService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -38,6 +39,16 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<TokenDto> userSignIn(@RequestBody @Valid UserSignInDto userSignInDto) {
         return new ResponseEntity<>(userService.userSignIn(userSignInDto), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Логаут.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @PostMapping("/logout")
+    public ResponseEntity<Void> userLogOut() {
+        userService.userLogOut();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(

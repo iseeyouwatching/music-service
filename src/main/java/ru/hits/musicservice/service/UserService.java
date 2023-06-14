@@ -10,18 +10,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hits.musicservice.dto.*;
+import ru.hits.musicservice.entity.BlacklistTokenEntity;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
 import ru.hits.musicservice.exception.UnauthorizedException;
-import ru.hits.musicservice.repository.FileMetadataRepository;
-import ru.hits.musicservice.repository.FollowerRepository;
-import ru.hits.musicservice.repository.SongRepository;
-import ru.hits.musicservice.repository.UserRepository;
+import ru.hits.musicservice.repository.*;
 import ru.hits.musicservice.security.JWTUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -38,6 +39,7 @@ public class UserService {
     private final FileService fileService;
     private final FollowerRepository followerRepository;
     private final FileMetadataRepository fileMetadataRepository;
+    private final BlacklistTokenRepository blacklistTokenRepository;
 
     @Transactional
     public TokenDto userSignUp(UserSignUpDto userSignUpDto) {
@@ -143,6 +145,16 @@ public class UserService {
         return result;
     }
 
+    @Transactional
+    public void userLogOut() {
+        String bearerToken = getBearerTokenHeader().substring(7);
+
+        BlacklistTokenEntity blacklistToken = BlacklistTokenEntity.builder()
+                .token(bearerToken)
+                .build();
+        blacklistTokenRepository.save(blacklistToken);
+    }
+
     private void updateUserEntity(UserEntity user, UserUpdateInfoDto userUpdateInfoDto) {
         if (userUpdateInfoDto.getAvatar() != null) {
             if (fileMetadataRepository.findByObjectName(userUpdateInfoDto.getAvatar()).isEmpty()) {
@@ -183,6 +195,10 @@ public class UserService {
     private UUID getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (UUID) authentication.getPrincipal();
+    }
+
+    private static String getBearerTokenHeader() {
+        return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
     }
 
 }
