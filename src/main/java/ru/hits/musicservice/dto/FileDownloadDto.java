@@ -9,8 +9,7 @@ import lombok.*;
 @Setter
 public class FileDownloadDto {
 
-    private byte[] in;
-
+    private String base64Data;
     private String filename;
 
 }

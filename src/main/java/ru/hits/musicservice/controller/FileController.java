@@ -31,14 +31,14 @@ public class FileController {
         return fileService.upload(file);
     }
 
-    @Operation(summary = "Получение файла по id.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/download/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<byte[]> download(@PathVariable("id") UUID id) {
+    @Operation(summary = "Скачать файл по id.", security = @SecurityRequirement(name = "bearerAuth"))
+    @GetMapping(value = "/download/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<String> download(@PathVariable("id") UUID id) {
         FileDownloadDto fileDownloadDto = fileService.download(id);
         return ResponseEntity.ok()
                 .header("Content-Type", MediaType.APPLICATION_OCTET_STREAM_VALUE)
                 .header("Content-Disposition", "filename=" + fileDownloadDto.getFilename())
-                .body(fileDownloadDto.getIn());
+                .body(fileDownloadDto.getBase64Data());
     }
 
 }

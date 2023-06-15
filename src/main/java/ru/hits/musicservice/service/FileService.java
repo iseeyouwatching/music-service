@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
+import java.util.Base64;
 import java.util.UUID;
 
 @Slf4j
@@ -78,11 +79,14 @@ public class FileService {
                 .object(String.valueOf(id))
                 .build();
         try (var in = minioClient.getObject(args)) {
-            return new FileDownloadDto(in.readAllBytes(), fileMetadata.getFilename());
+            String base64DataWithPrefix = "data:" + fileMetadata.getContentType() + ";base64," + Base64.getEncoder().encodeToString(in.readAllBytes());
+            return new FileDownloadDto(base64DataWithPrefix, fileMetadata.getFilename());
         } catch (Exception e) {
             String errorMessage = "Ошибка при загрузке файла с ID " + id + ".";
             log.error(errorMessage, e);
             throw new RuntimeException(errorMessage, e);
         }
     }
+
+
 }
