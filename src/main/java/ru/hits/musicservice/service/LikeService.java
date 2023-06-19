@@ -35,7 +35,7 @@ public class LikeService {
     private final NotificationRepository notificationRepository;
 
     @Transactional
-    public void likeSong(UUID songId) {
+    public int likeSong(UUID songId) {
         UUID authenticatedUserId = getAuthenticatedUserId();
 
         UserEntity user = userRepository.findById(authenticatedUserId)
@@ -68,10 +68,12 @@ public class LikeService {
                 .sendDate(LocalDateTime.now())
                 .build();
         notificationRepository.save(notification);
+
+        return song.getLikesCount();
     }
 
     @Transactional
-    public void takeLikeOffTheSong(UUID songId) {
+    public int takeLikeOffTheSong(UUID songId) {
         UUID authenticatedUserId = getAuthenticatedUserId();
 
         UserEntity user = userRepository.findById(authenticatedUserId)
@@ -99,6 +101,8 @@ public class LikeService {
 
         notificationRepository.deleteByText("Пользователь с ID " + authenticatedUserId
                 + " лайкнул трек с ID " + song.getId() + ".");
+
+        return song.getLikesCount();
     }
 
     public List<SongInfoDto> getLikedSongs(UUID userId) {

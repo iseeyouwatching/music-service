@@ -26,9 +26,8 @@ public class LikeController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @PostMapping("/add/{songId}")
-    public ResponseEntity<Void> likeSong(@PathVariable("songId") UUID songId) {
-        likeService.likeSong(songId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Integer> likeSong(@PathVariable("songId") UUID songId) {
+        return new ResponseEntity<>(likeService.likeSong(songId), HttpStatus.OK);
     }
 
     @Operation(
@@ -36,9 +35,8 @@ public class LikeController {
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @DeleteMapping("/remove-like/{songId}")
-    public ResponseEntity<Void> takeLikeOffTheSong(@PathVariable("songId") UUID songId) {
-        likeService.takeLikeOffTheSong(songId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Integer> takeLikeOffTheSong(@PathVariable("songId") UUID songId) {
+        return new ResponseEntity<>(likeService.takeLikeOffTheSong(songId), HttpStatus.OK);
     }
 
     @Operation(
