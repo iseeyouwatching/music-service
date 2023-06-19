@@ -15,6 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hits.musicservice.dto.*;
 import ru.hits.musicservice.entity.BlacklistTokenEntity;
+import ru.hits.musicservice.entity.FollowerEntity;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
@@ -121,7 +122,10 @@ public class UserService {
             throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
         }
 
-        return new UserProfileDto(user.get(), followerRepository.findByArtistIdAndFollowerId(userId, getAuthenticatedUserId()).isPresent());
+        Optional<FollowerEntity> follower = followerRepository.findByArtistIdAndFollowerId(userId, getAuthenticatedUserId());
+
+        return new UserProfileDto(user.get(), follower.isPresent()
+                && follower.get().isFollowing());
     }
 
     public List<SearchedUserDto> searchUsers(SearchStringDto searchStringDto) {
