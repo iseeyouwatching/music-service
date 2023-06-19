@@ -45,6 +45,8 @@ public class UserProfileDto {
 
     private int uploadedSongsCount;
 
+    private boolean isFollowing;
+
     public UserProfileDto(UserEntity user) {
         this.id = user.getId();
         this.email = user.getEmail();
@@ -62,6 +64,26 @@ public class UserProfileDto {
         this.followingCount = user.getFollowingCount();
         this.likesCount = user.getLikesCount();
         this.uploadedSongsCount = user.getUploadedSongsCount();
+    }
+
+    public UserProfileDto(UserEntity user, boolean isFollowing) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.username = user.getUsername();
+        this.name = user.getName();
+        this.surname = user.getSurname();
+        this.city = user.getCity();
+        this.country = user.getCountry();
+        this.age = user.getAge();
+        this.gender = user.getGender();
+        this.bio = user.getBio();
+        this.avatar = user.getAvatar();
+        this.headerImage = user.getHeaderImage();
+        this.followersCount = user.getFollowersCount();
+        this.followingCount = user.getFollowingCount();
+        this.likesCount = user.getLikesCount();
+        this.uploadedSongsCount = user.getUploadedSongsCount();
+        this.isFollowing = isFollowing;
     }
 
 }

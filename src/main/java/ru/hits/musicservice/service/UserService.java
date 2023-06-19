@@ -121,7 +121,7 @@ public class UserService {
             throw new NotFoundException("Пользователь с ID " + userId + " не найден.");
         }
 
-        return new UserProfileDto(user.get());
+        return new UserProfileDto(user.get(), followerRepository.findByArtistIdAndFollowerId(userId, getAuthenticatedUserId()).isPresent());
     }
 
     public List<SearchedUserDto> searchUsers(SearchStringDto searchStringDto) {
