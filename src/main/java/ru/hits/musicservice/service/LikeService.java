@@ -11,6 +11,7 @@ import ru.hits.musicservice.entity.LikeEntity;
 import ru.hits.musicservice.entity.NotificationEntity;
 import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
+import ru.hits.musicservice.enumeration.NotificationStatus;
 import ru.hits.musicservice.enumeration.NotificationType;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
@@ -61,13 +62,16 @@ public class LikeService {
         user.setLikesCount(user.getLikesCount() + 1);
         userRepository.save(user);
 
-        NotificationEntity notification = NotificationEntity.builder()
-                .type(NotificationType.LIKE_SONG)
-                .text("Пользователь с ID " + authenticatedUserId + " лайкнул трек с ID " + song.getId() + ".")
-                .userId(song.getAuthorId())
-                .sendDate(LocalDateTime.now())
-                .build();
-        notificationRepository.save(notification);
+        if (authenticatedUserId.compareTo(song.getAuthorId()) != 0) {
+            NotificationEntity notification = NotificationEntity.builder()
+                    .type(NotificationType.LIKE_SONG)
+                    .text("Пользователь с ID " + authenticatedUserId + " лайкнул трек с ID " + song.getId() + ".")
+                    .userId(song.getAuthorId())
+                    .sendDate(LocalDateTime.now())
+                    .status(NotificationStatus.UNREAD)
+                    .build();
+            notificationRepository.save(notification);
+        }
 
         return song.getLikesCount();
     }

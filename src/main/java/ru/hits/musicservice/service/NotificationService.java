@@ -5,10 +5,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.hits.musicservice.dto.NotificationDto;
 import ru.hits.musicservice.entity.NotificationEntity;
+import ru.hits.musicservice.enumeration.NotificationStatus;
 import ru.hits.musicservice.repository.NotificationRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +34,16 @@ public class NotificationService {
         }
 
         return result;
+    }
+
+    public Long getUnreadCount() {
+        return notificationRepository.countByUserIdAndStatus(getAuthenticatedUserId(), NotificationStatus.UNREAD);
+    }
+
+    @Transactional
+    public Long markNotificationsAsRead() {
+        notificationRepository.updateStatusByUserId(getAuthenticatedUserId(), NotificationStatus.READ);
+        return getUnreadCount();
     }
 
     private UUID getAuthenticatedUserId() {

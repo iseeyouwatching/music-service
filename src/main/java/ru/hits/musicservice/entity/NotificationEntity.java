@@ -2,6 +2,7 @@ package ru.hits.musicservice.entity;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
+import ru.hits.musicservice.enumeration.NotificationStatus;
 import ru.hits.musicservice.enumeration.NotificationType;
 
 import javax.persistence.*;
@@ -32,6 +33,8 @@ public class NotificationEntity {
 
     @Column(name = "user_id")
     private UUID userId;
+
+    private NotificationStatus status;
 
     @Column(name = "send_date")
     private LocalDateTime sendDate;

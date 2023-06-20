@@ -17,7 +17,7 @@ public class FollowerInfoDto {
 
     private String username;
 
-    private int subscribersCount;
+    private int followersCount;
 
     private boolean isFollowing;
 

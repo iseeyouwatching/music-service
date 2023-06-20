@@ -12,6 +12,7 @@ import ru.hits.musicservice.dto.FollowingUserInfoDto;
 import ru.hits.musicservice.entity.FollowerEntity;
 import ru.hits.musicservice.entity.NotificationEntity;
 import ru.hits.musicservice.entity.UserEntity;
+import ru.hits.musicservice.enumeration.NotificationStatus;
 import ru.hits.musicservice.enumeration.NotificationType;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
@@ -71,6 +72,7 @@ public class FollowingService {
                     .text("Пользователь с ID " + followerId + " подписался на пользователя с ID " + userId + ".")
                     .userId(userId)
                     .sendDate(LocalDateTime.now())
+                    .status(NotificationStatus.UNREAD)
                     .build();
             notificationRepository.save(notification);
 
@@ -98,6 +100,7 @@ public class FollowingService {
                 .text("Пользователь с ID " + followerId + " подписался на пользователя с ID " + userId + ".")
                 .userId(userId)
                 .sendDate(LocalDateTime.now())
+                .status(NotificationStatus.UNREAD)
                 .build();
         notificationRepository.save(notification);
 
