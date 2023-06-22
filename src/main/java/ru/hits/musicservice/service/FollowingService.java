@@ -69,8 +69,10 @@ public class FollowingService {
 
             NotificationEntity notification = NotificationEntity.builder()
                     .type(NotificationType.FOLLOW)
-                    .text("Пользователь с ID " + followerId + " подписался на пользователя с ID " + userId + ".")
+                    .text("Пользователь " + authenticatedUser.get().getUsername()
+                            + " подписался на пользователя " + user.get().getUsername() + ".")
                     .userId(userId)
+                    .perfomerId(followerId)
                     .sendDate(LocalDateTime.now())
                     .status(NotificationStatus.UNREAD)
                     .build();
@@ -97,8 +99,10 @@ public class FollowingService {
 
         NotificationEntity notification = NotificationEntity.builder()
                 .type(NotificationType.FOLLOW)
-                .text("Пользователь с ID " + followerId + " подписался на пользователя с ID " + userId + ".")
+                .text("Пользователь " + authenticatedUser.get().getUsername()
+                        + " подписался на пользователя " + user.get().getUsername() + ".")
                 .userId(userId)
+                .perfomerId(followerId)
                 .sendDate(LocalDateTime.now())
                 .status(NotificationStatus.UNREAD)
                 .build();
@@ -142,8 +146,8 @@ public class FollowingService {
             userRepository.save(authenticatedUser.get());
         }
 
-        notificationRepository.deleteByText("Пользователь с ID " + followerId
-                + " подписался на пользователя с ID " + userId + ".");
+        notificationRepository.deleteByText("Пользователь " + authenticatedUser.get().getUsername()
+                + " подписался на пользователя " + user.get().getUsername() + ".");
 
         return new FollowerDto(subscriber.get());
     }

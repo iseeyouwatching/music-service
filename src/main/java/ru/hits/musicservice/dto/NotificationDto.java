@@ -5,6 +5,7 @@ import lombok.*;
 import ru.hits.musicservice.entity.NotificationEntity;
 import ru.hits.musicservice.enumeration.NotificationType;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,6 +24,10 @@ public class NotificationDto {
 
     private UUID userId;
 
+    private UUID perfomerId;
+
+    private UUID songId;
+
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDateTime sendDate;
 
@@ -31,6 +36,8 @@ public class NotificationDto {
         this.type = notification.getType();
         this.text = notification.getText();
         this.userId = notification.getUserId();
+        this.perfomerId = notification.getPerfomerId();
+        this.songId = notification.getSongId();
         this.sendDate = notification.getSendDate();
     }
 

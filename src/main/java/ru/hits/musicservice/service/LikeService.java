@@ -65,8 +65,10 @@ public class LikeService {
         if (authenticatedUserId.compareTo(song.getAuthorId()) != 0) {
             NotificationEntity notification = NotificationEntity.builder()
                     .type(NotificationType.LIKE_SONG)
-                    .text("Пользователь с ID " + authenticatedUserId + " лайкнул трек с ID " + song.getId() + ".")
+                    .text("Пользователь " + user.getUsername() + " лайкнул трек " + song.getName() + ".")
                     .userId(song.getAuthorId())
+                    .perfomerId(authenticatedUserId)
+                    .songId(songId)
                     .sendDate(LocalDateTime.now())
                     .status(NotificationStatus.UNREAD)
                     .build();
@@ -103,8 +105,8 @@ public class LikeService {
             userRepository.save(user);
         }
 
-        notificationRepository.deleteByText("Пользователь с ID " + authenticatedUserId
-                + " лайкнул трек с ID " + song.getId() + ".");
+        notificationRepository.deleteByText("Пользователь " + user.getUsername()
+                + " лайкнул трек " + song.getName() + ".");
 
         return song.getLikesCount();
     }
@@ -121,7 +123,7 @@ public class LikeService {
 
         List<SongInfoDto> result = new ArrayList<>();
         for (LikeEntity like: likes) {
-            result.add(new SongInfoDto(like.getSong(), true));
+            result.add(new SongInfoDto(like.getSong(), likeRepository.findByUserAndSong(userRepository.findById(getAuthenticatedUserId()).get(), like.getSong()).isPresent()));
         }
 
         return result;

@@ -24,7 +24,7 @@ public class NotificationController {
             summary = "Получить список уведомлений.",
             security = @SecurityRequirement(name = "bearerAuth")
     )
-    @PostMapping("/get")
+    @GetMapping()
     public ResponseEntity<List<NotificationDto>> getNotifications() {
         return new ResponseEntity<>(notificationService.getNotifications(), HttpStatus.OK);
     }

@@ -12,10 +12,7 @@ import ru.hits.musicservice.entity.SongEntity;
 import ru.hits.musicservice.entity.UserEntity;
 import ru.hits.musicservice.exception.ConflictException;
 import ru.hits.musicservice.exception.NotFoundException;
-import ru.hits.musicservice.repository.FileMetadataRepository;
-import ru.hits.musicservice.repository.LikeRepository;
-import ru.hits.musicservice.repository.SongRepository;
-import ru.hits.musicservice.repository.UserRepository;
+import ru.hits.musicservice.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -28,6 +25,7 @@ public class SongService {
     private final UserRepository userRepository;
     private final FileMetadataRepository fileMetadataRepository;
     private final LikeRepository likeRepository;
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public SongInfoDto addSong(AddSongDto addSongDto) {
@@ -78,6 +76,8 @@ public class SongService {
                 user.setLikesCount(user.getLikesCount() - 1);
                 userRepository.save(user);
             }
+            notificationRepository.deleteByText("Пользователь " + user.getUsername()
+                    + " лайкнул трек " + song.get().getName() + ".");
         }
 
         fileMetadataRepository.deleteByObjectName(song.get().getFileId());
@@ -89,6 +89,7 @@ public class SongService {
             uploader.setUploadedSongsCount(uploader.getUploadedSongsCount() - 1);
             userRepository.save(uploader);
         }
+
     }
 
     public List<SongInfoDto> getUploadedSongs(UUID userId) {

@@ -34,6 +34,12 @@ public class NotificationEntity {
     @Column(name = "user_id")
     private UUID userId;
 
+    @Column(name = "perfomer_id")
+    private UUID perfomerId;
+
+    @Column(name = "song_id")
+    private UUID songId;
+
     private NotificationStatus status;
 
     @Column(name = "send_date")
